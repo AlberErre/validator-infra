@@ -1,13 +1,18 @@
 - name: Solana validator infra
   hosts: validators
   tasks:
-    - name: Ping host
+    - name: Ping validators hosts
       ansible.builtin.ping:
+
+    - name: Upgrade all apt packages
+      ansible.builtin.apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400
 
     - name: Add the user 'sol' with a specific and a primary group of 'admin'
       ansible.builtin.user:
         name: sol
-        group: admin
-
-
+        group: sol
+        generate_ssh_key: yes
 
