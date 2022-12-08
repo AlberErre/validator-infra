@@ -23,3 +23,26 @@
         fstype: tmpfs
         opts: rw,noexec,nodev,nosuid,noatime,size=16G,user=sol
         state: mounted
+
+    # source: https://gist.github.com/devster31/74e48cc1c8e73c637bc7
+    - name: Create swap spillover file
+      sudo: yes
+      command: dd if=/dev/zero of=/swapfile bs=1M count=16K
+
+    - name: set permissions on swap file
+      sudo: yes
+      file:
+        path: /swapfile
+        mode: 0600
+
+    - name: format swap file
+      sudo: yes
+      command: mkswap /swapfile
+
+    - name: 'Create swap spillover file and mount to fstab'
+      mount:
+        path: none
+        src: /swapfile
+        fstype: swap
+        opts: sw
+        state: mounted
