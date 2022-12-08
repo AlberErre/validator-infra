@@ -16,3 +16,10 @@
         group: sol
         generate_ssh_key: yes
 
+    - name: 'Create ramdisk and mount to fstab'
+      mount:
+        path: /mnt/ramdisk
+        src: tmpfs
+        fstype: tmpfs
+        opts: rw,noexec,nodev,nosuid,noatime,size=16G,user=sol
+        state: mounted
