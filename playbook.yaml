@@ -26,10 +26,29 @@
         group: sol
         generate_ssh_key: yes
 
-    - name: 'Create ramdisk and mount to fstab'
+    - name: Create ramdisk and mount to fstab
       mount:
         path: /mnt/ramdisk
         src: tmpfs
         fstype: tmpfs
         opts: rw,noexec,nodev,nosuid,noatime,size=16G,user=sol
         state: mounted
+
+    - name: Install solana
+      command: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
+
+    - name: Config solana to devnet
+      command: solana config set --url devnet
+
+    - name: Create validator identity account
+      command: solana-keygen new --outfile ~/validator-keypair.json
+
+    - name: Set validator identity account
+      command: solana config set --keypair ~/validator-keypair.json
+
+    - name: Create validator vote account
+      command: solana-keygen new --outfile ~/vote-account-keypair.json
+
+    - name: Config identity account
+      command: solana create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/wallet-keypair.json
+
