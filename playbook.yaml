@@ -4,6 +4,7 @@
   vars:
     swap_file_path: /swapfile
     swap_file_size_mb: '16384' # 16G, must be exact megabytes -> https://www.gbmb.org/gb-to-mb
+    swap_swappiness: '1'
 
   roles:
     # role to handle swap files. source: https://galaxy.ansible.com/geerlingguy/swap
