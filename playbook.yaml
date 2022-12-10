@@ -3,9 +3,14 @@
   remote_user: sol
 
   vars:
+    # swap vars
     swap_file_path: /swapfile
     swap_file_size_mb: '16384' # 16G, must be exact megabytes -> https://www.gbmb.org/gb-to-mb
     swap_swappiness: '1'
+    # services vars
+    services_on_boot:
+      - "validator.service"
+      - "systuner.service"
 
   roles:
     # role to handle swap files. source: https://galaxy.ansible.com/geerlingguy/swap
@@ -71,4 +76,49 @@
     - name: Create log folder
       ansible.builtin.shell: mkdir ~/log
 
+    - name: Copy validator service
+      become: true
+      ansible.builtin.copy:
+        src: /services/validator.service
+        dest: /etc/systemd/system/validator.service
+        owner: root
+        mode: '0755'
+
+    - name: Copy systuner service
+      become: true
+      ansible.builtin.copy:
+        src: /services/systuner.service
+        dest: /etc/systemd/system/systuner.service
+        owner: root
+        mode: '0755'
+
+    # This debugs what services are available on the remote machine
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+    - name: Print service facts
+      ansible.builtin.debug:
+        var: ansible_facts.services
+
+    - name: enable new services on boot
+      become: true
+      ansible.builtin.service:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      when: "item in services"
+      with_items: '{{ services_on_boot }}'
+
+    - name: Copy logrotate config for solana
+      become: true
+      ansible.builtin.copy:
+        src: /logrotate/solana
+        dest: /etc/logrotate.d/solana
+        owner: root
+        mode: '0755'
+
+    - name: restart logrotate service
+      become: true
+      ansible.builtin.service:
+        name: logrotate
+        state: restarted
 
