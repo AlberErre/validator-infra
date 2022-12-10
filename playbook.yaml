@@ -20,7 +20,7 @@
         update_cache: yes
         cache_valid_time: 86400
 
-    - name: Add the user 'sol' with a specific and a primary group of 'admin'
+    - name: Add the user 'sol'
       ansible.builtin.user:
         name: sol
         group: sol
@@ -35,20 +35,23 @@
         state: mounted
 
     - name: Install solana
-      command: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
+      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
 
     - name: Config solana to devnet
-      command: solana config set --url devnet
+      ansible.builtin.shell: solana config set --url devnet
+
+    - name: Create validator wallet owner account
+      ansible.builtin.shell: solana-keygen new --outfile ~/wallet-keypair.json
 
     - name: Create validator identity account
-      command: solana-keygen new --outfile ~/validator-keypair.json
+      ansible.builtin.shell: solana-keygen new --outfile ~/validator-keypair.json
 
-    - name: Set validator identity account
-      command: solana config set --keypair ~/validator-keypair.json
+    - name: Set validator identity
+      ansible.builtin.shell: solana config set --keypair ~/validator-keypair.json
 
     - name: Create validator vote account
-      command: solana-keygen new --outfile ~/vote-account-keypair.json
+      ansible.builtin.shell: solana-keygen new --outfile ~/vote-account-keypair.json
 
-    - name: Config identity account
-      command: solana create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/wallet-keypair.json
+    - name: Config vote account
+      ansible.builtin.shell: solana create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/wallet-keypair.json
 
