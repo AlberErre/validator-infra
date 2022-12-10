@@ -1,5 +1,6 @@
 - name: Solana validator infra
   hosts: validators
+  remote_user: sol
 
   vars:
     swap_file_path: /swapfile
@@ -12,22 +13,26 @@
 
   tasks:
     - name: Ping validators hosts
+      become: true
       ansible.builtin.ping:
 
     - name: Upgrade all apt packages
+      become: true
       ansible.builtin.apt:
         upgrade: yes
         update_cache: yes
         cache_valid_time: 86400
 
     - name: Add the user 'sol'
+      become: true
       ansible.builtin.user:
         name: sol
         group: sol
         generate_ssh_key: yes
 
     - name: Create ramdisk and mount to fstab
-      mount:
+      become: true
+      ansible.posix.mount:
         path: /mnt/ramdisk
         src: tmpfs
         fstype: tmpfs
@@ -35,6 +40,7 @@
         state: mounted
 
     - name: Install solana
+      become: true
       ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
 
     - name: Config solana to devnet
@@ -54,4 +60,15 @@
 
     - name: Config vote account
       ansible.builtin.shell: solana create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/wallet-keypair.json
+
+    - name: Copy start-validator script
+      ansible.builtin.copy:
+        src: /scripts/start-validator.sh
+        dest: ~/start-validator.sh
+        owner: sol
+        mode: '0755'
+
+    - name: Create log folder
+      ansible.builtin.shell: mkdir ~/log
+
 
