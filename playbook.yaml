@@ -76,6 +76,20 @@
     - name: Create log folder
       ansible.builtin.shell: mkdir ~/log
 
+    - name: Copy logrotate config for solana
+      become: true
+      ansible.builtin.copy:
+        src: /logrotate/solana
+        dest: /etc/logrotate.d/solana
+        owner: root
+        mode: '0755'
+
+    - name: restart logrotate service
+      become: true
+      ansible.builtin.service:
+        name: logrotate
+        state: restarted
+
     - name: Copy validator service
       become: true
       ansible.builtin.copy:
@@ -108,17 +122,5 @@
       when: "item in services"
       with_items: '{{ services_on_boot }}'
 
-    - name: Copy logrotate config for solana
-      become: true
-      ansible.builtin.copy:
-        src: /logrotate/solana
-        dest: /etc/logrotate.d/solana
-        owner: root
-        mode: '0755'
-
-    - name: restart logrotate service
-      become: true
-      ansible.builtin.service:
-        name: logrotate
-        state: restarted
-
+    - name: Reboot the machine with all defaults
+      ansible.builtin.reboot:
