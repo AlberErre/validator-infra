@@ -19,3 +19,11 @@ Playbook with infra config is available at `./playbook.yaml`
 #### devnet steps
 
 https://github.com/agjell/sol-tutorials/blob/master/setting-up-a-solana-devnet-validator.md#install-ubuntu-server
+
+#### more detailed guide
+
+https://www.solana-validator-guidebook.com/validator-setup/initial-validator-setup
+
+#### security
+
+https://www.solana-validator-guidebook.com/best-practices/security-best-practices
