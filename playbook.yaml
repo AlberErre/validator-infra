@@ -15,6 +15,8 @@
   roles:
     # role to handle swap files. source: https://galaxy.ansible.com/geerlingguy/swap
     - geerlingguy.swap
+    # role to block Brute Force Attacks With fail2ban
+    - role: robertdebock.fail2ban
 
   tasks:
     - name: Ping validators hosts
