@@ -1,6 +1,6 @@
 # Validator infra 🏗
 
-Ansible playbooks to set up Solana validator
+Ansible playbooks to set up a Solana validator
 
 ## Run
 
