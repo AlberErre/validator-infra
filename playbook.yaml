@@ -1,6 +1,6 @@
 - name: Solana validator infra
   hosts: validators
-  remote_user: sol
+  become: true
 
   vars:
     # swap vars
@@ -18,25 +18,21 @@
 
   tasks:
     - name: Ping validators hosts
-      become: true
       ansible.builtin.ping:
 
     - name: Upgrade all apt packages
-      become: true
       ansible.builtin.apt:
         upgrade: yes
         update_cache: yes
         cache_valid_time: 86400
 
     - name: Add the user 'sol'
-      become: true
       ansible.builtin.user:
         name: sol
         group: sol
         generate_ssh_key: yes
 
     - name: Create ramdisk and mount to fstab
-      become: true
       ansible.posix.mount:
         path: /mnt/ramdisk
         src: tmpfs
@@ -45,28 +41,34 @@
         state: mounted
 
     - name: Install solana
-      become: true
       ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
 
     - name: Config solana to devnet
+      remote_user: sol
       ansible.builtin.shell: solana config set --url devnet
 
     - name: Create validator wallet owner account
+      remote_user: sol
       ansible.builtin.shell: solana-keygen new --outfile ~/wallet-keypair.json
 
     - name: Create validator identity account
+      remote_user: sol
       ansible.builtin.shell: solana-keygen new --outfile ~/validator-keypair.json
 
     - name: Set validator identity
+      remote_user: sol
       ansible.builtin.shell: solana config set --keypair ~/validator-keypair.json
 
     - name: Create validator vote account
+      remote_user: sol
       ansible.builtin.shell: solana-keygen new --outfile ~/vote-account-keypair.json
 
     - name: Config vote account
+      remote_user: sol
       ansible.builtin.shell: solana create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/wallet-keypair.json
 
     - name: Copy start-validator script
+      remote_user: sol
       ansible.builtin.copy:
         src: /scripts/start-validator.sh
         dest: ~/start-validator.sh
@@ -74,10 +76,10 @@
         mode: '0755'
 
     - name: Create log folder
+      remote_user: sol
       ansible.builtin.shell: mkdir ~/log
 
     - name: Copy logrotate config for solana
-      become: true
       ansible.builtin.copy:
         src: /logrotate/solana
         dest: /etc/logrotate.d/solana
@@ -85,7 +87,6 @@
         mode: '0755'
 
     - name: restart logrotate service
-      become: true
       ansible.builtin.service:
         name: logrotate
         state: restarted
@@ -133,7 +134,6 @@
         state=present
 
     - name: Copy validator service
-      become: true
       ansible.builtin.copy:
         src: /services/validator.service
         dest: /etc/systemd/system/validator.service
@@ -141,7 +141,6 @@
         mode: '0755'
 
     - name: Copy systuner service
-      become: true
       ansible.builtin.copy:
         src: /services/systuner.service
         dest: /etc/systemd/system/systuner.service
@@ -156,7 +155,6 @@
         var: ansible_facts.services
 
     - name: enable new services on boot
-      become: true
       ansible.builtin.service:
         name: "{{ item }}"
         enabled: true
