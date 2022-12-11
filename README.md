@@ -27,3 +27,7 @@ https://www.solana-validator-guidebook.com/validator-setup/initial-validator-set
 #### security
 
 https://www.solana-validator-guidebook.com/best-practices/security-best-practices
+
+#### official specs
+
+https://docs.solana.com/running-validator/validator-reqs
