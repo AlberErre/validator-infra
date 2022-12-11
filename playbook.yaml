@@ -90,6 +90,29 @@
         name: logrotate
         state: restarted
 
+    - name: Deny all incoming connections
+      community.general.ufw:
+        policy: deny
+        direction: incoming
+
+    - name: Allow ssh
+      community.general.ufw:
+        rule: allow
+        port: 22
+        proto: "tcp"
+
+    - name: Allow validator port range 8000-10000 tcp/udp
+      community.general.ufw:
+        rule: allow
+        port: 8000:10000
+
+    - name: Disallow SSH password authentication
+      ansible.builtin.lineinfile:
+        dest=/etc/ssh/sshd_config
+        regexp="^PasswordAuthentication"
+        line="PasswordAuthentication no"
+        state=present
+
     - name: Copy validator service
       become: true
       ansible.builtin.copy:
@@ -121,6 +144,10 @@
         state: started
       when: "item in services"
       with_items: '{{ services_on_boot }}'
+
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
 
     - name: Reboot the machine with all defaults
       ansible.builtin.reboot:
