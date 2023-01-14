@@ -1,0 +1,18 @@
+- name: Logging solana validator
+  hosts: validators
+  become: true
+  tasks:
+    - name: Copy logrotate config for solana
+      ansible.builtin.copy:
+        src: ./logrotate/solana
+        dest: /etc/logrotate.d/solana
+        owner: root
+        mode: '0755'
+
+    - name: restart logrotate service
+      ansible.builtin.service:
+        name: logrotate
+        state: restarted
+
+    - name: Reboot the machine with all defaults
+      ansible.builtin.reboot:

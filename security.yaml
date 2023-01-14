@@ -1,0 +1,52 @@
+- name: Solana validator security config
+  hosts: validators
+  become: true
+  tasks:
+    - name: Deny all incoming connections
+      community.general.ufw:
+        policy: deny
+        direction: incoming
+
+    - name: Allow ssh
+      community.general.ufw:
+        rule: allow
+        port: 22
+        proto: "tcp"
+
+    - name: Allow validator port range 8000-10000 tcp
+      community.general.ufw:
+        rule: allow
+        port: 8000:10000
+        proto: "tcp"
+
+    - name: Allow validator port range 8000-10000 udp
+      community.general.ufw:
+        rule: allow
+        port: 8000:10000
+        proto: "udp"
+
+    # - name: Block JSONRPC over HTTP (mainnet only)
+    #   community.general.ufw:
+    #     rule: deny
+    #     port: 8899
+    #     proto: "tcp"
+
+    # - name: Block JSONRPC over Websockets (mainnet only)
+    #   community.general.ufw:
+    #     rule: deny
+    #     port: 8900
+    #     proto: "tcp"
+
+    - name: Disallow SSH password authentication
+      ansible.builtin.lineinfile:
+        dest=/etc/ssh/sshd_config
+        regexp="^PasswordAuthentication"
+        line="PasswordAuthentication no"
+        state=present
+
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
+
+    - name: Reboot the machine with all defaults
+      ansible.builtin.reboot:

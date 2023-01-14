@@ -1,0 +1,37 @@
+# NOTE: Need to set authorized_key for .ssh sol user first
+
+- name: Config solana validator identity
+  hosts: validators
+  become_user: sol
+
+  tasks:
+    # - name: Config solana to devnet
+    #   ansible.builtin.shell: solana config set --url devnet
+
+    # - name: Create validator wallet owner account
+    #   ansible.builtin.shell: solana-keygen new --outfile ~/wallet-keypair.json
+
+    # - name: Create validator identity account
+    #   ansible.builtin.shell: solana-keygen new --outfile ~/validator-keypair.json
+
+    # - name: Set validator identity
+    #   ansible.builtin.shell: solana config set --keypair ~/validator-keypair.json
+
+    # - name: Create validator vote account
+    #   ansible.builtin.shell: solana-keygen new --outfile ~/vote-account-keypair.json
+
+    # - name: Config vote account
+    #   ansible.builtin.shell: solana create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/wallet-keypair.json
+
+    - name: Copy start-validator script
+      ansible.builtin.copy:
+        src: ./scripts/start-validator.sh
+        dest: ~/start-validator.sh
+        owner: sol
+        mode: '0755'
+
+    - name: Create log folder
+      ansible.builtin.file:
+        path: ~/log
+        state: directory
+        mode: '0755'

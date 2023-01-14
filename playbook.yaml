@@ -5,7 +5,7 @@
   vars:
     # swap vars
     swap_file_path: /swapfile
-    swap_file_size_mb: '16384' # 16G, must be exact megabytes -> https://www.gbmb.org/gb-to-mb
+    swap_file_size_mb: '32768' # 32G, must be exact megabytes -> https://www.gbmb.org/gb-to-mb
     swap_swappiness: '1'
     # services vars
     services_on_boot:
@@ -28,11 +28,9 @@
         update_cache: yes
         cache_valid_time: 86400
 
-    - name: Add the user 'sol'
+    - name: Add user 'sol'
       ansible.builtin.user:
         name: sol
-        group: sol
-        generate_ssh_key: yes
 
     - name: Create ramdisk and mount to fstab
       ansible.posix.mount:
@@ -45,106 +43,31 @@
     - name: Install solana
       ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
 
-    - name: Config solana to devnet
-      remote_user: sol
-      ansible.builtin.shell: solana config set --url devnet
-
-    - name: Create validator wallet owner account
-      remote_user: sol
-      ansible.builtin.shell: solana-keygen new --outfile ~/wallet-keypair.json
-
-    - name: Create validator identity account
-      remote_user: sol
-      ansible.builtin.shell: solana-keygen new --outfile ~/validator-keypair.json
-
-    - name: Set validator identity
-      remote_user: sol
-      ansible.builtin.shell: solana config set --keypair ~/validator-keypair.json
-
-    - name: Create validator vote account
-      remote_user: sol
-      ansible.builtin.shell: solana-keygen new --outfile ~/vote-account-keypair.json
-
-    - name: Config vote account
-      remote_user: sol
-      ansible.builtin.shell: solana create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/wallet-keypair.json
-
     - name: Copy start-validator script
-      remote_user: sol
+      become_user: sol
       ansible.builtin.copy:
-        src: /scripts/start-validator.sh
+        src: ./scripts/start-validator.sh
         dest: ~/start-validator.sh
         owner: sol
         mode: '0755'
 
-    - name: Create log folder
-      remote_user: sol
-      ansible.builtin.shell: mkdir ~/log
-
-    - name: Copy logrotate config for solana
-      ansible.builtin.copy:
-        src: /logrotate/solana
-        dest: /etc/logrotate.d/solana
-        owner: root
+    - name: Create log folder, if it does not exist
+      become_user: sol
+      ansible.builtin.file:
+        path: ~/log
+        state: directory
         mode: '0755'
-
-    - name: restart logrotate service
-      ansible.builtin.service:
-        name: logrotate
-        state: restarted
-
-    - name: Deny all incoming connections
-      community.general.ufw:
-        policy: deny
-        direction: incoming
-
-    - name: Allow ssh
-      community.general.ufw:
-        rule: allow
-        port: 22
-        proto: "tcp"
-
-    - name: Allow validator port range 8000-10000 tcp
-      community.general.ufw:
-        rule: allow
-        port: 8000:10000
-        proto: "tcp"
-
-    - name: Allow validator port range 8000-10000 udp
-      community.general.ufw:
-        rule: allow
-        port: 8000:10000
-        proto: "udp"
-
-    # - name: Block JSONRPC over HTTP (mainnet only)
-    #   community.general.ufw:
-    #     rule: deny
-    #     port: 8899
-    #     proto: "tcp"
-
-    # - name: Block JSONRPC over Websockets (mainnet only)
-    #   community.general.ufw:
-    #     rule: deny
-    #     port: 8900
-    #     proto: "tcp"
-
-    - name: Disallow SSH password authentication
-      ansible.builtin.lineinfile:
-        dest=/etc/ssh/sshd_config
-        regexp="^PasswordAuthentication"
-        line="PasswordAuthentication no"
-        state=present
 
     - name: Copy validator service
       ansible.builtin.copy:
-        src: /services/validator.service
+        src: ./services/validator.service
         dest: /etc/systemd/system/validator.service
         owner: root
         mode: '0755'
 
     - name: Copy systuner service
       ansible.builtin.copy:
-        src: /services/systuner.service
+        src: ./services/systuner.service
         dest: /etc/systemd/system/systuner.service
         owner: root
         mode: '0755'
@@ -163,10 +86,6 @@
         state: started
       when: "item in services"
       with_items: '{{ services_on_boot }}'
-
-    - name: Enable UFW
-      community.general.ufw:
-        state: enabled
 
     - name: Reboot the machine with all defaults
       ansible.builtin.reboot:
