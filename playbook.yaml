@@ -37,7 +37,7 @@
         path: /mnt/ramdisk
         src: tmpfs
         fstype: tmpfs
-        opts: rw,noexec,nodev,nosuid,noatime,size=16G,user=sol
+        opts: rw,noexec,nodev,nosuid,noatime,size=32G,user=sol
         state: mounted
 
     - name: Install solana
