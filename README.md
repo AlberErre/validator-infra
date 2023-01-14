@@ -5,7 +5,19 @@ Ansible playbooks to set up a Solana validator
 ## Run
 
 ```
-ansible-playbook -i inventory playbook.yaml
+ansible-playbook -i inventory playbook.yaml -u root
+```
+
+```
+ansible-playbook -i inventory security.yaml -u root
+```
+
+```
+ansible-playbook -i inventory logging.yaml -u root
+```
+
+```
+ansible-playbook -i inventory config-solana-identity.yaml -u sol
 ```
 
 ### Inventory
