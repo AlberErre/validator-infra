@@ -43,3 +43,11 @@ https://www.solana-validator-guidebook.com/best-practices/security-best-practice
 #### official specs
 
 https://docs.solana.com/running-validator/validator-reqs
+
+### Comments
+
+For systemctl daemon reload (in case hot-reload services changes are made):
+
+```
+systemctl daemon-reload
+```
