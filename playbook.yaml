@@ -84,7 +84,7 @@
         name: "{{ item }}"
         enabled: true
         state: started
-      when: "item in items"
+      when: "item in services"
       with_items: '{{ services_on_boot }}'
 
     - name: Reboot the machine with all defaults
