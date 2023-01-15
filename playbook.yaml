@@ -5,7 +5,7 @@
   vars:
     # swap vars
     swap_file_path: /swapfile
-    swap_file_size_mb: '32768' # 32G, must be exact megabytes -> https://www.gbmb.org/gb-to-mb
+    swap_file_size_mb: '51200' # 50G, must be exact megabytes -> https://www.gbmb.org/gb-to-mb
     swap_swappiness: '1'
     # services vars
     services_on_boot:
@@ -37,11 +37,11 @@
         path: /mnt/ramdisk
         src: tmpfs
         fstype: tmpfs
-        opts: rw,noexec,nodev,nosuid,noatime,size=32G,user=sol
+        opts: rw,noexec,nodev,nosuid,noatime,size=64G,user=sol
         state: mounted
 
     - name: Install solana
-      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
+      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.12/install)"
 
     - name: Copy start-validator script
       become_user: sol
@@ -58,17 +58,17 @@
         state: directory
         mode: '0755'
 
-    - name: Copy validator service
-      ansible.builtin.copy:
-        src: ./services/validator.service
-        dest: /etc/systemd/system/validator.service
-        owner: root
-        mode: '0755'
-
     - name: Copy systuner service
       ansible.builtin.copy:
         src: ./services/systuner.service
         dest: /etc/systemd/system/systuner.service
+        owner: root
+        mode: '0755'
+
+    - name: Copy validator service
+      ansible.builtin.copy:
+        src: ./services/validator.service
+        dest: /etc/systemd/system/validator.service
         owner: root
         mode: '0755'
 
@@ -84,7 +84,7 @@
         name: "{{ item }}"
         enabled: true
         state: started
-      when: "item in services"
+      when: "item in items"
       with_items: '{{ services_on_boot }}'
 
     - name: Reboot the machine with all defaults
