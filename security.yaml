@@ -1,6 +1,11 @@
 - name: Solana validator security config
   hosts: validators
   become: true
+
+  roles:
+    # role to block Brute Force Attacks With fail2ban
+    - role: robertdebock.fail2ban
+
   tasks:
     - name: Deny all incoming connections
       community.general.ufw:

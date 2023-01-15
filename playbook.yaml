@@ -15,8 +15,6 @@
   roles:
     # role to handle swap files. source: https://galaxy.ansible.com/geerlingguy/swap
     - geerlingguy.swap
-    # role to block Brute Force Attacks With fail2ban
-    - role: robertdebock.fail2ban
 
   tasks:
     - name: Ping validators hosts
@@ -41,7 +39,7 @@
         state: mounted
 
     - name: Install solana
-      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.12/install)"
+      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
 
     - name: Copy start-validator script
       become_user: sol
@@ -72,19 +70,19 @@
         owner: root
         mode: '0755'
 
-    # This debugs what services are available on the remote machine
+    # This collects services and expose them into ansible_facts.services
     - name: Populate service facts
       ansible.builtin.service_facts:
-    - name: Print service facts
-      ansible.builtin.debug:
-        var: ansible_facts.services
-
+    # # This debugs what services are available on the remote machine
+    # - name: Print service facts
+    #   ansible.builtin.debug:
+    #     var: ansible_facts.services
     - name: enable new services on boot
       ansible.builtin.service:
         name: "{{ item }}"
         enabled: true
         state: started
-      when: "item in services"
+      when: "item in ansible_facts.services"
       with_items: '{{ services_on_boot }}'
 
     - name: Reboot the machine with all defaults
