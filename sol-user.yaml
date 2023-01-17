@@ -1,0 +1,62 @@
+# NOTE: Need to set authorized_key for .ssh sol user first
+
+- name: Config sol user & validator identity
+  hosts: validators
+  become: true
+
+  tasks:
+    - name: Set pubkey to authorized_keys for sol user
+      become_user: sol
+      authorized_key:
+        user: sol
+        state: present
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+    - name: Install solana
+      become_user: sol
+      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
+
+    - name: Config solana to devnet
+      become_user: sol
+      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana config set --url devnet
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Create validator wallet owner account
+      become_user: sol
+      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/wallet-keypair.json
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Create validator identity account
+      become_user: sol
+      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/validator-keypair.json
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Set validator identity
+      become_user: sol
+      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana config set --keypair ~/validator-keypair.json
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Create validator vote account
+      become_user: sol
+      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/vote-account-keypair.json
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Config vote account
+      become_user: sol
+      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/wallet-keypair.json
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Reboot the machine with all defaults
+      ansible.builtin.reboot:

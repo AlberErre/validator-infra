@@ -26,10 +26,6 @@
         update_cache: yes
         cache_valid_time: 86400
 
-    - name: Add user 'sol'
-      ansible.builtin.user:
-        name: sol
-
     - name: Create ramdisk and mount to fstab
       ansible.posix.mount:
         path: /mnt/ramdisk
@@ -41,12 +37,17 @@
     - name: Install solana
       ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
 
+    - name: Add user 'sol'
+      ansible.builtin.user:
+        name: sol
+
     - name: Copy start-validator script
       become_user: sol
       ansible.builtin.copy:
         src: ./scripts/start-validator.sh
         dest: ~/start-validator.sh
         owner: sol
+        group: sol
         mode: '0755'
 
     - name: Create log folder, if it does not exist
@@ -61,6 +62,7 @@
         src: ./services/systuner.service
         dest: /etc/systemd/system/systuner.service
         owner: root
+        group: root
         mode: '0755'
 
     - name: Copy validator service
@@ -68,6 +70,7 @@
         src: ./services/validator.service
         dest: /etc/systemd/system/validator.service
         owner: root
+        group: root
         mode: '0755'
 
     # This collects services and expose them into ansible_facts.services
@@ -77,6 +80,7 @@
     # - name: Print service facts
     #   ansible.builtin.debug:
     #     var: ansible_facts.services
+
     - name: enable new services on boot
       ansible.builtin.service:
         name: "{{ item }}"
