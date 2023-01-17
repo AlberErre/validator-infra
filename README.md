@@ -5,28 +5,28 @@ Ansible playbooks to set up a Solana validator
 ## Run
 
 ```
-ansible-playbook -i inventory playbook.yaml -u root
+ansible-playbook -i inventory playbooks/infra.yaml -u root
 ```
 
 ```
-ansible-playbook -i inventory security.yaml -u root
+ansible-playbook -i inventory playbooks/security.yaml -u root
 ```
 
 ```
-ansible-playbook -i inventory logging.yaml -u root
+ansible-playbook -i inventory playbooks/logging.yaml -u root
 ```
 
 ```
-ansible-playbook -i inventory config-solana-identity.yaml -u sol
+ansible-playbook -i inventory playbooks/sol-user.yaml -u root
 ```
 
 ### Inventory
 
-A local inventory is available at `./inventory`
+A local inventory is available at `./inventory` or `./inventory.local` (private file)
 
 ### Playbook
 
-Playbook with infra config is available at `./playbook.yaml`
+Playbooks with infra config are available at `playbooks/` folder
 
 #### devnet steps
 
