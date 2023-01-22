@@ -34,6 +34,8 @@ A local inventory is available at `./inventory` or `./inventory.local` (hidden l
 
 Playbooks with infra config are available at `playbooks/` folder
 
+---
+
 ## SSH
 
 To connect to your validator, run the following:
@@ -43,6 +45,8 @@ ssh <user>@<ip> -i ~/.ssh/<validator_privatekey_file>
 ```
 
 Note: In case you are using default ssh key (id_rsa), you can skip `-i ~/.ssh/<validator_pubkey>` flag.
+
+---
 
 ## Useful Information
 
@@ -66,7 +70,7 @@ https://www.solana-validator-guidebook.com/best-practices/security-best-practice
 
 https://docs.solana.com/running-validator/validator-reqs
 
-### Comments
+#### Extra notes
 
 For systemctl daemon reload (in case hot-reload services changes are made):
 

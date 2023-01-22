@@ -40,6 +40,7 @@
     - name: Add user 'sol'
       ansible.builtin.user:
         name: sol
+        shell: /bin/bash
 
     - name: Copy systuner service
       ansible.builtin.copy:
