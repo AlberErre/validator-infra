@@ -43,6 +43,13 @@
         state: directory
         mode: '0755'
 
+    - name: Create ledger folder, if it does not exist
+      become_user: sol
+      ansible.builtin.file:
+        path: ~/ledger
+        state: directory
+        mode: '0755'
+
     - name: Config solana to testnet
       become_user: sol
       ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana config set --url https://api.testnet.solana.com

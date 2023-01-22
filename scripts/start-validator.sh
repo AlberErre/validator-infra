@@ -13,7 +13,8 @@ exec solana-validator \
   # Algo|Stake
   --known-validator 9QxCLckBiJc783jnMvXZubK4wH86Eqqvashtrwvcsgkv \
   --only-known-rpc \
-  --ledger ledger \
+  --log ~/log/validator.log \
+  --ledger ~/ledger \
   --rpc-port 8899 \
   --dynamic-port-range 8000-8020 \
   --entrypoint entrypoint.testnet.solana.com:8001 \
