@@ -5,11 +5,11 @@ Ansible playbooks to set up a Solana validator
 ## Run
 
 ```
-ansible-playbook -i inventory playbooks/infra.yaml -u root
+ansible-playbook -i inventory playbooks/security.yaml -u root
 ```
 
 ```
-ansible-playbook -i inventory playbooks/security.yaml -u root
+ansible-playbook -i inventory playbooks/infra.yaml -u root
 ```
 
 ```
@@ -20,9 +20,15 @@ ansible-playbook -i inventory playbooks/logging.yaml -u root
 ansible-playbook -i inventory playbooks/sol-user.yaml -u root
 ```
 
+In case you are using a custom ssh key (not default id_rsa), use this flag with all commands:
+
+```bash
+--private-key ~/.ssh/validator_rsa
+```
+
 ### Inventory
 
-A local inventory is available at `./inventory` or `./inventory.local` (private file)
+A local inventory is available at `./inventory` or `./inventory.local` (hidden local file)
 
 ### Playbook
 
