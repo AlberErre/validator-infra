@@ -14,7 +14,7 @@
 
     - name: Install solana
       become_user: sol
-      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
+      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.12/install)"
 
     - name: Config solana to devnet
       become_user: sol

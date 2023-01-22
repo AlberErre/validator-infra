@@ -5,7 +5,7 @@
   vars:
     # swap vars
     swap_file_path: /swapfile
-    swap_file_size_mb: '51200' # 50G, must be exact megabytes -> https://www.gbmb.org/gb-to-mb
+    swap_file_size_mb: '102400' # 100G, must be exact megabytes -> https://www.gbmb.org/gb-to-mb
     swap_swappiness: '1'
     # services vars
     services_on_boot:
@@ -31,11 +31,11 @@
         path: /mnt/ramdisk
         src: tmpfs
         fstype: tmpfs
-        opts: rw,noexec,nodev,nosuid,noatime,size=64G,user=sol
+        opts: rw,noexec,nodev,nosuid,noatime,size=100G,user=sol
         state: mounted
 
     - name: Install solana
-      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.10/install)"
+      ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.12/install)"
 
     - name: Add user 'sol'
       ansible.builtin.user:
