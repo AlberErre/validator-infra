@@ -34,6 +34,10 @@ A local inventory is available at `./inventory` or `./inventory.local` (hidden l
 
 Playbooks with infra config are available at `playbooks/` folder
 
+#### Initial SSH server configuration
+
+https://help.ubuntu.com/community/SSH/OpenSSH/Keys#Public_and_Private_Keys
+
 #### devnet steps
 
 https://github.com/agjell/sol-tutorials/blob/master/setting-up-a-solana-devnet-validator.md#install-ubuntu-server
