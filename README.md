@@ -48,6 +48,28 @@ Note: In case you are using default ssh key (id_rsa), you can skip `-i ~/.ssh/<v
 
 ---
 
+## Debugging
+
+Monitor validator:
+
+```bash
+solana-validator --ledger /home/sol/ledger monitor
+```
+
+Check logs files:
+
+```bash
+less -F /home/sol/log/validator.log
+```
+
+Check system validator.service logs:
+
+```bash
+journalctl -u validator.service
+```
+
+---
+
 ## Useful Information
 
 #### Initial SSH server configuration
