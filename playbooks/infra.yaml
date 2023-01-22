@@ -41,25 +41,9 @@
       ansible.builtin.user:
         name: sol
 
-    - name: Copy start-validator script
-      become_user: sol
-      ansible.builtin.copy:
-        src: ./scripts/start-validator.sh
-        dest: ~/start-validator.sh
-        owner: sol
-        group: sol
-        mode: '0755'
-
-    - name: Create log folder, if it does not exist
-      become_user: sol
-      ansible.builtin.file:
-        path: ~/log
-        state: directory
-        mode: '0755'
-
     - name: Copy systuner service
       ansible.builtin.copy:
-        src: ./services/systuner.service
+        src: ../services/systuner.service
         dest: /etc/systemd/system/systuner.service
         owner: root
         group: root
@@ -67,7 +51,7 @@
 
     - name: Copy validator service
       ansible.builtin.copy:
-        src: ./services/validator.service
+        src: ../services/validator.service
         dest: /etc/systemd/system/validator.service
         owner: root
         group: root

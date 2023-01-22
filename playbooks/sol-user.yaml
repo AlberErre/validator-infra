@@ -10,13 +10,29 @@
       authorized_key:
         user: sol
         state: present
-        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        key: "{{ lookup('file', '~/.ssh/validator_rsa.pub') }}"
 
     - name: Install solana
       become_user: sol
       ansible.builtin.shell: sh -c "$(curl -sSfL https://release.solana.com/v1.14.12/install)"
 
-    - name: Config solana to devnet
+    - name: Copy start-validator script
+      become_user: sol
+      ansible.builtin.copy:
+        src: ../scripts/start-validator.sh
+        dest: ~/start-validator.sh
+        owner: sol
+        group: sol
+        mode: '0755'
+
+    - name: Create log folder, if it does not exist
+      become_user: sol
+      ansible.builtin.file:
+        path: ~/log
+        state: directory
+        mode: '0755'
+
+    - name: Config solana to testnet
       become_user: sol
       ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana config set --url https://api.testnet.solana.com
       args:

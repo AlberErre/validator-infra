@@ -4,7 +4,7 @@
   tasks:
     - name: Copy logrotate config for solana
       ansible.builtin.copy:
-        src: ./logrotate/solana
+        src: ../logrotate/solana
         dest: /etc/logrotate.d/solana
         owner: root
         group: root
