@@ -1,7 +1,7 @@
 #!/bin/bash
 exec solana-validator \
-  --identity validator-keypair.json \
-  --vote-account vote-account-keypair.json \
+  --identity /home/sol/validator-keypair.json \
+  --vote-account /home/sol/vote-account-keypair.json \
   --known-validator 5D1fNXzvv5NjV1ysLjirC4WY92RNsVH18vjmcszZd8on \  # Solana Labs
   --known-validator dDzy5SR3AXdYWVqbDEkVFdvSPCtS9ihF5kJkHCtXoFs \   # MonkeDAO
   --known-validator Ft5fbkqNa76vnsjYNwjDZUXoTWpP7VYm3mtsaQckQADN \  # Certus One
