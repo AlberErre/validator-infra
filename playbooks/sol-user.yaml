@@ -18,7 +18,7 @@
 
     - name: Config solana to devnet
       become_user: sol
-      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana config set --url devnet
+      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana config set --url https://api.testnet.solana.com
       args:
         executable: /bin/bash
       ignore_errors: true

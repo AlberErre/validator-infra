@@ -1,22 +1,19 @@
 #!/bin/bash
 exec solana-validator \
- --entrypoint entrypoint.devnet.solana.com:8001 \
- --entrypoint entrypoint2.devnet.solana.com:8001 \
- --entrypoint entrypoint3.devnet.solana.com:8001 \
- --entrypoint entrypoint4.devnet.solana.com:8001 \
- --entrypoint entrypoint5.devnet.solana.com:8001 \
- --known-validator dv1ZAGvdsz5hHLwWXsVnM94hWf1pjbKVau1QVkaMJ92 \
- --known-validator dv2eQHeP4RFrJZ6UeiZWoc3XTtmtZCUKxxCApCDcRNV \
- --known-validator dv4ACNkpYPcE3aKmYDqZm9G5EB3J4MRoeE7WNDRBVJB \
- --known-validator dv3qDFk1DTF36Z62bNvrCXe9sKATA6xvVy6A798xxAS \
- --expected-genesis-hash EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG \
- --dynamic-port-range 8000-8020 \
- --rpc-port 8899 \
- --only-known-rpc \
- --wal-recovery-mode skip_any_corrupted_record \
- --identity ~/validator-keypair.json \
- --vote-account ~/vote-account-keypair.json \
- --log ~/log/validator.log \
- --accounts /mnt/ramdisk/solana-accounts \
- --ledger ~/ledger \
- --limit-ledger-size
+  --identity validator-keypair.json \
+  --vote-account vote-account-keypair.json \
+  --known-validator 5D1fNXzvv5NjV1ysLjirC4WY92RNsVH18vjmcszZd8on \  # Solana Labs
+  --known-validator dDzy5SR3AXdYWVqbDEkVFdvSPCtS9ihF5kJkHCtXoFs \   # MonkeDAO
+  --known-validator Ft5fbkqNa76vnsjYNwjDZUXoTWpP7VYm3mtsaQckQADN \  # Certus One
+  --known-validator eoKpUABi59aT4rR9HGS3LcMecfut9x7zJyodWWP43YQ \   # SerGo
+  --known-validator 9QxCLckBiJc783jnMvXZubK4wH86Eqqvashtrwvcsgkv \  # Algo|Stake
+  --only-known-rpc \
+  --ledger ledger \
+  --rpc-port 8899 \
+  --dynamic-port-range 8000-8020 \
+  --entrypoint entrypoint.testnet.solana.com:8001 \
+  --entrypoint entrypoint2.testnet.solana.com:8001 \
+  --entrypoint entrypoint3.testnet.solana.com:8001 \
+  --expected-genesis-hash 4uhcVJyU9pJkvQyS88uRDiswHXSCkY3zQawwpjk2NsNY \
+  --wal-recovery-mode skip_any_corrupted_record \
+  --limit-ledger-size
