@@ -34,6 +34,18 @@ A local inventory is available at `./inventory` or `./inventory.local` (hidden l
 
 Playbooks with infra config are available at `playbooks/` folder
 
+## SSH
+
+To connect to your validator, run the following:
+
+```bash
+ssh <user>@<ip> -i ~/.ssh/<validator_privatekey_file>
+```
+
+Note: In case you are using default ssh key (id_rsa), you can skip `-i ~/.ssh/<validator_pubkey>` flag.
+
+## Useful Information
+
 #### Initial SSH server configuration
 
 https://help.ubuntu.com/community/SSH/OpenSSH/Keys#Public_and_Private_Keys
