@@ -5,6 +5,17 @@
   become: true
 
   tasks:
+    # Package needed for "ansible.builtin.expect" install python3-pip (python package manager)
+    - name: Install python3-pip package
+      ansible.builtin.apt:
+        name: python3-pip
+        state: present
+
+    # Package needed for "ansible.builtin.expect" module, using pip installe (python)
+    - name: Install pexpect package
+      ansible.builtin.pip:
+        name: pexpect
+
     - name: Set pubkey to authorized_keys for sol user
       become_user: sol
       authorized_key:
@@ -41,28 +52,40 @@
 
     - name: Create validator wallet owner account
       become_user: sol
-      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/wallet-keypair.json
-      args:
-        executable: /bin/bash
-      ignore_errors: true
+      ansible.builtin.expect: # expect runs a command and interacts with the prompt
+        command: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/wallet-keypair.json
+        creates: ~/wallet-keypair.json
+        responses:
+          'BIP39 Passphrase \(empty for none\):': '' # we need to escape characters for Regex
 
     - name: Create validator identity account
       become_user: sol
-      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/validator-keypair.json
-      args:
-        executable: /bin/bash
-      ignore_errors: true
+      ansible.builtin.expect: # expect runs a command and interacts with the prompt
+        command: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/validator-keypair.json
+        creates: ~/validator-keypair.json
+        responses:
+          'BIP39 Passphrase \(empty for none\):': '' # we need to escape characters for Regex
 
     - name: Set validator identity
       become_user: sol
       ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana config set --keypair ~/validator-keypair.json
       args:
         executable: /bin/bash
-      ignore_errors: true
 
     - name: Create validator vote account
       become_user: sol
-      ansible.builtin.shell: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/vote-account-keypair.json
+      ansible.builtin.expect: # expect runs a command and interacts with the prompt
+        command: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/vote-account-keypair.json
+        creates: ~/vote-account-keypair.json
+        responses:
+          'BIP39 Passphrase \(empty for none\):': '' # we need to escape characters for Regex
+
+    - name: airdrop validator-keypair.json wallet
+      become_user: sol
+      ansible.builtin.shell: |
+        VALIDATOR_ADDRESS=$(/home/sol/.local/share/solana/install/active_release/bin/solana address)
+
+        /home/sol/.local/share/solana/install/active_release/bin/solana airdrop 1 $VALIDATOR_ADDRESS
       args:
         executable: /bin/bash
       ignore_errors: true
