@@ -52,19 +52,15 @@
 
     - name: Create validator wallet owner account
       become_user: sol
-      ansible.builtin.expect: # expect runs a command and interacts with the prompt
-        command: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/wallet-keypair.json
+      ansible.builtin.shell:
+        cmd: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new -o ~/wallet-keypair.json --no-bip39-passphrase
         creates: ~/wallet-keypair.json
-        responses:
-          'BIP39 Passphrase \(empty for none\):': '' # we need to escape characters for Regex
 
     - name: Create validator identity account
       become_user: sol
-      ansible.builtin.expect: # expect runs a command and interacts with the prompt
-        command: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/validator-keypair.json
+      ansible.builtin.shell:
+        cmd: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new -o ~/validator-keypair.json --no-bip39-passphrase
         creates: ~/validator-keypair.json
-        responses:
-          'BIP39 Passphrase \(empty for none\):': '' # we need to escape characters for Regex
 
     - name: Set validator identity
       become_user: sol
@@ -74,16 +70,14 @@
 
     - name: Create validator vote account
       become_user: sol
-      ansible.builtin.expect: # expect runs a command and interacts with the prompt
-        command: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new --outfile ~/vote-account-keypair.json
+      ansible.builtin.shell:
+        cmd: /home/sol/.local/share/solana/install/active_release/bin/solana-keygen new -o ~/vote-account-keypair.json --no-bip39-passphrase
         creates: ~/vote-account-keypair.json
-        responses:
-          'BIP39 Passphrase \(empty for none\):': '' # we need to escape characters for Regex
 
     - name: airdrop validator-keypair.json wallet
       become_user: sol
       ansible.builtin.shell: |
-        VALIDATOR_ADDRESS=$(/home/sol/.local/share/solana/install/active_release/bin/solana address)
+        VALIDATOR_ADDRESS=$(/home/sol/.local/share/solana/install/active_release/bin/solana ~/validator-keypair.json)
 
         /home/sol/.local/share/solana/install/active_release/bin/solana airdrop 1 $VALIDATOR_ADDRESS
       args:
