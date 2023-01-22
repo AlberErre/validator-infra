@@ -77,7 +77,7 @@
     - name: airdrop validator-keypair.json wallet
       become_user: sol
       ansible.builtin.shell: |
-        VALIDATOR_ADDRESS=$(/home/sol/.local/share/solana/install/active_release/bin/solana ~/validator-keypair.json)
+        VALIDATOR_ADDRESS=$(/home/sol/.local/share/solana/install/active_release/bin/solana address)
 
         /home/sol/.local/share/solana/install/active_release/bin/solana airdrop 1 $VALIDATOR_ADDRESS
       args:
